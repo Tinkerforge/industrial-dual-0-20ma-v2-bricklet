@@ -7084,7 +7084,7 @@
   (gr_text tinkerforge.com (at 103.3 58.1 90) (layer F.SilkS)
     (effects (font (size 0.8001 0.8001) (thickness 0.14986)))
   )
-  (gr_text "Industrial 0-20mA\n2.0\n" (at 135.8 58.1 90) (layer F.SilkS)
+  (gr_text "Industrial Dual 0-20mA\n2.0\n" (at 135.8 58.1 90) (layer F.SilkS)
     (effects (font (size 1 1) (thickness 0.15)))
   )
   (gr_arc (start 100.29952 40.5511) (end 97.80016 40.5511) (angle 90) (layer Edge.Cuts) (width 0.381))
