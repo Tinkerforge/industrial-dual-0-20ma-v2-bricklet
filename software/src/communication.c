@@ -27,22 +27,22 @@
 
 #include "mcp3423.h"
 
-uint8_t on_channel_handle_channel = 0;
-CallbackValue on_channel_cbv[ON_CHANNEL_COUNT];
+uint8_t channel_based_handle_channel = 0;
+CallbackValue channel_based_cbv[CHANNEL_BASED_COUNT];
 
 BootloaderHandleMessageResponse handle_message(const void *message, void *response) {
 	switch(tfp_get_fid_from_message(message)) {
 		case FID_GET_CURRENT: {
 			uint8_t channel = ((OnChannelGetCallbackValue *)message)->channel;
-			return on_channel_get_callback_value(message, response, &on_channel_cbv[channel]);
+			return channel_based_get_callback_value(message, response, &channel_based_cbv[channel]);
 		}
 		case FID_SET_CURRENT_CALLBACK_CONFIGURATION: {
 			uint8_t channel = ((OnChannelSetCallbackValueCallbackConfiguration *)message)->channel;
-			return on_channel_set_callback_value_callback_configuration(message, &on_channel_cbv[channel]);
+			return channel_based_set_callback_value_callback_configuration(message, &channel_based_cbv[channel]);
 		}
 		case FID_GET_CURRENT_CALLBACK_CONFIGURATION: {
 			uint8_t channel = ((OnChannelGetCallbackValueCallbackConfiguration *)message)->channel;
-			return on_channel_get_callback_value_callback_configuration(message, response, &on_channel_cbv[channel]);
+			return channel_based_get_callback_value_callback_configuration(message, response, &channel_based_cbv[channel]);
 		}
 		case FID_SET_SAMPLE_RATE: return set_sample_rate(message);
 		case FID_SET_GAIN: return set_gain(message);
@@ -94,12 +94,12 @@ BootloaderHandleMessageResponse get_channel_status_led_config(const GetChannelSt
 }
 
 bool handle_current_callback(void) {
-	bool ret = on_channel_handle_callback_value_callback(&on_channel_cbv[on_channel_handle_channel],
-	                                                     FID_CALLBACK_CURRENT,
-	                                                     on_channel_handle_channel);
+	bool ret = channel_based_handle_callback_value_callback(&channel_based_cbv[channel_based_handle_channel],
+	                                                        FID_CALLBACK_CURRENT,
+	                                                        channel_based_handle_channel);
 
-	if(!(++on_channel_handle_channel < ON_CHANNEL_COUNT)) {
-		on_channel_handle_channel = 0;
+	if(!(++channel_based_handle_channel < CHANNEL_BASED_COUNT)) {
+		channel_based_handle_channel = 0;
 	}
 
 	return ret;
@@ -110,8 +110,8 @@ void communication_tick(void) {
 }
 
 void communication_init(void) {
-	for(uint8_t i = 0; i < ON_CHANNEL_COUNT; i++) {
-		on_channel_callback_value_init(&on_channel_cbv[i], mcp3423_get_current);
+	for(uint8_t i = 0; i < CHANNEL_BASED_COUNT; i++) {
+		channel_based_callback_value_init(&channel_based_cbv[i], mcp3423_get_current);
 	}
 
 	communication_callback_init();
