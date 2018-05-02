@@ -28,7 +28,6 @@
 #include "bricklib2/protocols/tfp/tfp.h"
 #include "bricklib2/bootloader/bootloader.h"
 
-#define CHANNEL_BASED_COUNT 2
 #define CALLBACK_VALUE_TYPE CALLBACK_VALUE_TYPE_INT32
 
 // Default functions
