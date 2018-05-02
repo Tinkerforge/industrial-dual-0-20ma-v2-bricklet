@@ -45,6 +45,7 @@ BootloaderHandleMessageResponse handle_message(const void *message, void *respon
 			return channel_based_get_callback_value_callback_configuration(message, response, &channel_based_cbv[channel]);
 		}
 		case FID_SET_SAMPLE_RATE: return set_sample_rate(message);
+		case FID_GET_SAMPLE_RATE: return get_sample_rate(message, response);
 		case FID_SET_GAIN: return set_gain(message);
 		case FID_GET_GAIN: return get_gain(message, response);
 		case FID_SET_INFO_LED_CONFIG: return set_info_led_config(message);
@@ -58,6 +59,12 @@ BootloaderHandleMessageResponse handle_message(const void *message, void *respon
 BootloaderHandleMessageResponse set_sample_rate(const SetSampleRate *data) {
 
 	return HANDLE_MESSAGE_RESPONSE_EMPTY;
+}
+
+BootloaderHandleMessageResponse get_sample_rate(const GetSampleRate *data, GetSampleRate_Response *response) {
+	response->header.length = sizeof(GetSampleRate_Response);
+
+	return HANDLE_MESSAGE_RESPONSE_NEW_MESSAGE;
 }
 
 BootloaderHandleMessageResponse set_gain(const SetGain *data) {

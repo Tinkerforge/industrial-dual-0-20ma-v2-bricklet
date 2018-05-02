@@ -83,12 +83,13 @@ void communication_init(void);
 #define FID_SET_CURRENT_CALLBACK_CONFIGURATION 2
 #define FID_GET_CURRENT_CALLBACK_CONFIGURATION 3
 #define FID_SET_SAMPLE_RATE 5
-#define FID_SET_GAIN 6
-#define FID_GET_GAIN 7
-#define FID_SET_INFO_LED_CONFIG 8
-#define FID_GET_INFO_LED_CONFIG 9
-#define FID_SET_CHANNEL_STATUS_LED_CONFIG 10
-#define FID_GET_CHANNEL_STATUS_LED_CONFIG 11
+#define FID_GET_SAMPLE_RATE 6
+#define FID_SET_GAIN 7
+#define FID_GET_GAIN 8
+#define FID_SET_INFO_LED_CONFIG 9
+#define FID_GET_INFO_LED_CONFIG 10
+#define FID_SET_CHANNEL_STATUS_LED_CONFIG 11
+#define FID_GET_CHANNEL_STATUS_LED_CONFIG 12
 
 #define FID_CALLBACK_CURRENT 4
 
@@ -96,6 +97,15 @@ typedef struct {
 	TFPMessageHeader header;
 	uint8_t rate;
 } __attribute__((__packed__)) SetSampleRate;
+
+typedef struct {
+	TFPMessageHeader header;
+} __attribute__((__packed__)) GetSampleRate;
+
+typedef struct {
+	TFPMessageHeader header;
+	uint8_t rate;
+} __attribute__((__packed__)) GetSampleRate_Response;
 
 typedef struct {
 	TFPMessageHeader header;
@@ -113,13 +123,13 @@ typedef struct {
 
 typedef struct {
 	TFPMessageHeader header;
-	uint8_t led;
+	uint8_t channel;
 	uint8_t config;
 } __attribute__((__packed__)) SetInfoLEDConfig;
 
 typedef struct {
 	TFPMessageHeader header;
-	uint8_t led;
+	uint8_t channel;
 } __attribute__((__packed__)) GetInfoLEDConfig;
 
 typedef struct {
@@ -129,7 +139,7 @@ typedef struct {
 
 typedef struct {
 	TFPMessageHeader header;
-	uint8_t led;
+	uint8_t channel;
 	int32_t min;
 	int32_t max;
 	uint8_t config;
@@ -141,7 +151,7 @@ typedef struct {
 
 typedef struct {
 	TFPMessageHeader header;
-	uint8_t led;
+	uint8_t channel;
 	int32_t min;
 	int32_t max;
 	uint8_t config;
@@ -149,6 +159,7 @@ typedef struct {
 
 // Function prototypes
 BootloaderHandleMessageResponse set_sample_rate(const SetSampleRate *data);
+BootloaderHandleMessageResponse get_sample_rate(const GetSampleRate *data, GetSampleRate_Response *response);
 BootloaderHandleMessageResponse set_gain(const SetGain *data);
 BootloaderHandleMessageResponse get_gain(const GetGain *data, GetGain_Response *response);
 BootloaderHandleMessageResponse set_info_led_config(const SetInfoLEDConfig *data);
