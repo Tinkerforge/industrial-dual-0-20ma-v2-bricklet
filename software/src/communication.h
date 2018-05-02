@@ -52,13 +52,13 @@ void communication_init(void);
 #define INDUSTRIAL_DUAL_0_20MA_V2_GAIN_4X 2
 #define INDUSTRIAL_DUAL_0_20MA_V2_GAIN_8X 3
 
-#define INDUSTRIAL_DUAL_0_20MA_V2_INFO_LED_CONFIG_OFF 0
-#define INDUSTRIAL_DUAL_0_20MA_V2_INFO_LED_CONFIG_ON 1
-#define INDUSTRIAL_DUAL_0_20MA_V2_INFO_LED_CONFIG_SHOW_HEARTBEAT 2
-#define INDUSTRIAL_DUAL_0_20MA_V2_INFO_LED_CONFIG_SHOW_CHANNEL_STATUS 3
+#define INDUSTRIAL_DUAL_0_20MA_V2_CHANNEL_LED_CONFIG_OFF 0
+#define INDUSTRIAL_DUAL_0_20MA_V2_CHANNEL_LED_CONFIG_ON 1
+#define INDUSTRIAL_DUAL_0_20MA_V2_CHANNEL_LED_CONFIG_SHOW_HEARTBEAT 2
+#define INDUSTRIAL_DUAL_0_20MA_V2_CHANNEL_LED_CONFIG_SHOW_CHANNEL_STATUS 3
 
-#define INDUSTRIAL_DUAL_0_20MA_V2_CHANNEL_LED_CONFIG_THRESHOLD 0
-#define INDUSTRIAL_DUAL_0_20MA_V2_CHANNEL_LED_CONFIG_INTENSITY 1
+#define INDUSTRIAL_DUAL_0_20MA_V2_CHANNEL_LED_STATUS_CONFIG_THRESHOLD 0
+#define INDUSTRIAL_DUAL_0_20MA_V2_CHANNEL_LED_STATUS_CONFIG_INTENSITY 1
 
 #define INDUSTRIAL_DUAL_0_20MA_V2_BOOTLOADER_MODE_BOOTLOADER 0
 #define INDUSTRIAL_DUAL_0_20MA_V2_BOOTLOADER_MODE_FIRMWARE 1
@@ -86,10 +86,10 @@ void communication_init(void);
 #define FID_GET_SAMPLE_RATE 6
 #define FID_SET_GAIN 7
 #define FID_GET_GAIN 8
-#define FID_SET_INFO_LED_CONFIG 9
-#define FID_GET_INFO_LED_CONFIG 10
-#define FID_SET_CHANNEL_STATUS_LED_CONFIG 11
-#define FID_GET_CHANNEL_STATUS_LED_CONFIG 12
+#define FID_SET_CHANNEL_LED_CONFIG 9
+#define FID_GET_CHANNEL_LED_CONFIG 10
+#define FID_SET_CHANNEL_LED_STATUS_CONFIG 11
+#define FID_GET_CHANNEL_LED_STATUS_CONFIG 12
 
 #define FID_CALLBACK_CURRENT 4
 
@@ -125,29 +125,17 @@ typedef struct {
 	TFPMessageHeader header;
 	uint8_t channel;
 	uint8_t config;
-} __attribute__((__packed__)) SetInfoLEDConfig;
+} __attribute__((__packed__)) SetChannelLEDConfig;
 
 typedef struct {
 	TFPMessageHeader header;
 	uint8_t channel;
-} __attribute__((__packed__)) GetInfoLEDConfig;
+} __attribute__((__packed__)) GetChannelLEDConfig;
 
 typedef struct {
 	TFPMessageHeader header;
 	uint8_t config;
-} __attribute__((__packed__)) GetInfoLEDConfig_Response;
-
-typedef struct {
-	TFPMessageHeader header;
-	uint8_t channel;
-	int32_t min;
-	int32_t max;
-	uint8_t config;
-} __attribute__((__packed__)) SetChannelStatusLEDConfig;
-
-typedef struct {
-	TFPMessageHeader header;
-} __attribute__((__packed__)) GetChannelStatusLEDConfig;
+} __attribute__((__packed__)) GetChannelLEDConfig_Response;
 
 typedef struct {
 	TFPMessageHeader header;
@@ -155,17 +143,30 @@ typedef struct {
 	int32_t min;
 	int32_t max;
 	uint8_t config;
-} __attribute__((__packed__)) GetChannelStatusLEDConfig_Response;
+} __attribute__((__packed__)) SetChannelLEDStatusConfig;
+
+typedef struct {
+	TFPMessageHeader header;
+	uint8_t channel;
+} __attribute__((__packed__)) GetChannelLEDStatusConfig;
+
+typedef struct {
+	TFPMessageHeader header;
+	int32_t min;
+	int32_t max;
+	uint8_t config;
+} __attribute__((__packed__)) GetChannelLEDStatusConfig_Response;
+
 
 // Function prototypes
 BootloaderHandleMessageResponse set_sample_rate(const SetSampleRate *data);
 BootloaderHandleMessageResponse get_sample_rate(const GetSampleRate *data, GetSampleRate_Response *response);
 BootloaderHandleMessageResponse set_gain(const SetGain *data);
 BootloaderHandleMessageResponse get_gain(const GetGain *data, GetGain_Response *response);
-BootloaderHandleMessageResponse set_info_led_config(const SetInfoLEDConfig *data);
-BootloaderHandleMessageResponse get_info_led_config(const GetInfoLEDConfig *data, GetInfoLEDConfig_Response *response);
-BootloaderHandleMessageResponse set_channel_status_led_config(const SetChannelStatusLEDConfig *data);
-BootloaderHandleMessageResponse get_channel_status_led_config(const GetChannelStatusLEDConfig *data, GetChannelStatusLEDConfig_Response *response);
+BootloaderHandleMessageResponse set_channel_led_config(const SetChannelLEDConfig *data);
+BootloaderHandleMessageResponse get_channel_led_config(const GetChannelLEDConfig *data, GetChannelLEDConfig_Response *response);
+BootloaderHandleMessageResponse set_channel_led_status_config(const SetChannelLEDStatusConfig *data);
+BootloaderHandleMessageResponse get_channel_led_status_config(const GetChannelLEDStatusConfig *data, GetChannelLEDStatusConfig_Response *response);
 
 // Callbacks
 bool handle_current_callback(void);

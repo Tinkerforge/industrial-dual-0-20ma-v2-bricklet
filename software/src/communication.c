@@ -48,10 +48,10 @@ BootloaderHandleMessageResponse handle_message(const void *message, void *respon
 		case FID_GET_SAMPLE_RATE: return get_sample_rate(message, response);
 		case FID_SET_GAIN: return set_gain(message);
 		case FID_GET_GAIN: return get_gain(message, response);
-		case FID_SET_INFO_LED_CONFIG: return set_info_led_config(message);
-		case FID_GET_INFO_LED_CONFIG: return get_info_led_config(message, response);
-		case FID_SET_CHANNEL_STATUS_LED_CONFIG: return set_channel_status_led_config(message);
-		case FID_GET_CHANNEL_STATUS_LED_CONFIG: return get_channel_status_led_config(message, response);
+		case FID_SET_CHANNEL_LED_CONFIG: return set_channel_led_config(message);
+		case FID_GET_CHANNEL_LED_CONFIG: return get_channel_led_config(message, response);
+		case FID_SET_CHANNEL_LED_STATUS_CONFIG: return set_channel_led_status_config(message);
+		case FID_GET_CHANNEL_LED_STATUS_CONFIG: return get_channel_led_status_config(message, response);
 		default: return HANDLE_MESSAGE_RESPONSE_NOT_SUPPORTED;
 	}
 }
@@ -78,24 +78,24 @@ BootloaderHandleMessageResponse get_gain(const GetGain *data, GetGain_Response *
 	return HANDLE_MESSAGE_RESPONSE_NEW_MESSAGE;
 }
 
-BootloaderHandleMessageResponse set_info_led_config(const SetInfoLEDConfig *data) {
+BootloaderHandleMessageResponse set_channel_led_config(const SetChannelLEDConfig *data) {
 
 	return HANDLE_MESSAGE_RESPONSE_EMPTY;
 }
 
-BootloaderHandleMessageResponse get_info_led_config(const GetInfoLEDConfig *data, GetInfoLEDConfig_Response *response) {
-	response->header.length = sizeof(GetInfoLEDConfig_Response);
+BootloaderHandleMessageResponse get_channel_led_config(const GetChannelLEDConfig *data, GetChannelLEDConfig_Response *response) {
+	response->header.length = sizeof(GetChannelLEDConfig_Response);
 
 	return HANDLE_MESSAGE_RESPONSE_NEW_MESSAGE;
 }
 
-BootloaderHandleMessageResponse set_channel_status_led_config(const SetChannelStatusLEDConfig *data) {
+BootloaderHandleMessageResponse set_channel_led_status_config(const SetChannelLEDStatusConfig *data) {
 
 	return HANDLE_MESSAGE_RESPONSE_EMPTY;
 }
 
-BootloaderHandleMessageResponse get_channel_status_led_config(const GetChannelStatusLEDConfig *data, GetChannelStatusLEDConfig_Response *response) {
-	response->header.length = sizeof(GetChannelStatusLEDConfig_Response);
+BootloaderHandleMessageResponse get_channel_led_status_config(const GetChannelLEDStatusConfig *data, GetChannelLEDStatusConfig_Response *response) {
+	response->header.length = sizeof(GetChannelLEDStatusConfig_Response);
 
 	return HANDLE_MESSAGE_RESPONSE_NEW_MESSAGE;
 }
