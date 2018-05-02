@@ -26,8 +26,6 @@
 
 #include "bricklib2/hal/i2c_fifo/i2c_fifo.h"
 
-#define MCP3423_ADDR 0x69
-
 #define MCP3423_CONF_MSK_Gx1 0x00
 #define MCP3423_CONF_MSK_Gx2 0x01
 #define MCP3423_CONF_MSK_Gx4 0x02
