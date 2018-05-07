@@ -28,8 +28,6 @@
 #include "bricklib2/protocols/tfp/tfp.h"
 #include "bricklib2/bootloader/bootloader.h"
 
-#define CALLBACK_VALUE_TYPE CALLBACK_VALUE_TYPE_INT32
-
 // Default functions
 BootloaderHandleMessageResponse handle_message(const void *data, void *response);
 void communication_tick(void);
