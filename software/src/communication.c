@@ -33,16 +33,18 @@ CallbackValue channel_based_cbv[CHANNEL_BASED_COUNT];
 BootloaderHandleMessageResponse handle_message(const void *message, void *response) {
 	switch(tfp_get_fid_from_message(message)) {
 		case FID_GET_CURRENT: {
-			uint8_t channel = ((OnChannelGetCallbackValue *)message)->channel;
-			return channel_based_get_callback_value(message, response, &channel_based_cbv[channel]);
+			return channel_based_get_callback_value(message,
+			                                        response,
+			                                        &channel_based_cbv[((OnChannelGetCallbackValue *)message)->channel]);
 		}
 		case FID_SET_CURRENT_CALLBACK_CONFIGURATION: {
-			uint8_t channel = ((OnChannelSetCallbackValueCallbackConfiguration *)message)->channel;
-			return channel_based_set_callback_value_callback_configuration(message, &channel_based_cbv[channel]);
+			return channel_based_set_callback_value_callback_configuration(message,
+			                                                               &channel_based_cbv[((OnChannelSetCallbackValueCallbackConfiguration *)message)->channel]);
 		}
 		case FID_GET_CURRENT_CALLBACK_CONFIGURATION: {
-			uint8_t channel = ((OnChannelGetCallbackValueCallbackConfiguration *)message)->channel;
-			return channel_based_get_callback_value_callback_configuration(message, response, &channel_based_cbv[channel]);
+			return channel_based_get_callback_value_callback_configuration(message,
+			                                                               response,
+			                                                               &channel_based_cbv[((OnChannelGetCallbackValueCallbackConfiguration *)message)->channel]);
 		}
 		case FID_SET_SAMPLE_RATE: return set_sample_rate(message);
 		case FID_GET_SAMPLE_RATE: return get_sample_rate(message, response);
@@ -57,6 +59,26 @@ BootloaderHandleMessageResponse handle_message(const void *message, void *respon
 }
 
 BootloaderHandleMessageResponse set_sample_rate(const SetSampleRate *data) {
+	switch(data->rate) {
+		case INDUSTRIAL_DUAL_0_20MA_V2_SAMPLE_RATE_4_SPS:
+			mcp3423.cfg_sps_new = (uint8_t)MCP3423_CONF_MSK_SPS4;
+			break;
+
+		case INDUSTRIAL_DUAL_0_20MA_V2_SAMPLE_RATE_15_SPS:
+			mcp3423.cfg_sps_new = (uint8_t)MCP3423_CONF_MSK_SPS15;
+			break;
+
+		case INDUSTRIAL_DUAL_0_20MA_V2_SAMPLE_RATE_60_SPS:
+			mcp3423.cfg_sps_new = (uint8_t)MCP3423_CONF_MSK_SPS60;
+			break;
+
+		case INDUSTRIAL_DUAL_0_20MA_V2_SAMPLE_RATE_240_SPS:
+			mcp3423.cfg_sps_new = (uint8_t)MCP3423_CONF_MSK_SPS240;
+			break;
+
+		default:
+			break;
+	}
 
 	return HANDLE_MESSAGE_RESPONSE_EMPTY;
 }
@@ -64,16 +86,78 @@ BootloaderHandleMessageResponse set_sample_rate(const SetSampleRate *data) {
 BootloaderHandleMessageResponse get_sample_rate(const GetSampleRate *data, GetSampleRate_Response *response) {
 	response->header.length = sizeof(GetSampleRate_Response);
 
+	switch(mcp3423.cfg_sps) {
+		case MCP3423_CONF_MSK_SPS4:
+			response->rate = (uint8_t)INDUSTRIAL_DUAL_0_20MA_V2_SAMPLE_RATE_4_SPS;
+			break;
+
+		case MCP3423_CONF_MSK_SPS15:
+			response->rate = (uint8_t)INDUSTRIAL_DUAL_0_20MA_V2_SAMPLE_RATE_15_SPS;
+			break;
+
+		case MCP3423_CONF_MSK_SPS60:
+			response->rate = (uint8_t)INDUSTRIAL_DUAL_0_20MA_V2_SAMPLE_RATE_60_SPS;
+			break;
+
+		case MCP3423_CONF_MSK_SPS240:
+			response->rate = (uint8_t)INDUSTRIAL_DUAL_0_20MA_V2_SAMPLE_RATE_240_SPS;
+			break;
+
+		default:
+			break;
+	}
+
 	return HANDLE_MESSAGE_RESPONSE_NEW_MESSAGE;
 }
 
 BootloaderHandleMessageResponse set_gain(const SetGain *data) {
+	switch(data->gain) {
+		case INDUSTRIAL_DUAL_0_20MA_V2_GAIN_1X:
+			mcp3423.cfg_gain_new = (uint8_t)MCP3423_CONF_MSK_Gx1;
+			break;
+
+		case INDUSTRIAL_DUAL_0_20MA_V2_GAIN_2X:
+			mcp3423.cfg_gain_new = (uint8_t)MCP3423_CONF_MSK_Gx2;
+			break;
+
+		case INDUSTRIAL_DUAL_0_20MA_V2_GAIN_4X:
+			mcp3423.cfg_gain_new = (uint8_t)MCP3423_CONF_MSK_Gx4;
+			break;
+
+		case INDUSTRIAL_DUAL_0_20MA_V2_GAIN_8X:
+			mcp3423.cfg_gain_new = (uint8_t)MCP3423_CONF_MSK_Gx8;
+			break;
+
+		default:
+			break;
+	}
 
 	return HANDLE_MESSAGE_RESPONSE_EMPTY;
 }
 
 BootloaderHandleMessageResponse get_gain(const GetGain *data, GetGain_Response *response) {
 	response->header.length = sizeof(GetGain_Response);
+
+	switch(mcp3423.cfg_gain) {
+		case MCP3423_CONF_MSK_Gx1:
+			response->gain = (uint8_t)INDUSTRIAL_DUAL_0_20MA_V2_GAIN_1X;
+			break;
+
+		case MCP3423_CONF_MSK_Gx2:
+			response->gain = (uint8_t)INDUSTRIAL_DUAL_0_20MA_V2_GAIN_2X;
+			break;
+
+		case MCP3423_CONF_MSK_Gx4:
+			response->gain = (uint8_t)INDUSTRIAL_DUAL_0_20MA_V2_GAIN_4X;
+			break;
+
+		case MCP3423_CONF_MSK_Gx8:
+			response->gain = (uint8_t)INDUSTRIAL_DUAL_0_20MA_V2_GAIN_8X;
+			break;
+
+		default:
+			break;
+	}
 
 	return HANDLE_MESSAGE_RESPONSE_NEW_MESSAGE;
 }

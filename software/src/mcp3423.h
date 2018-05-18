@@ -31,7 +31,7 @@
 #define MCP3423_CONF_MSK_Gx4 0x02
 #define MCP3423_CONF_MSK_Gx8 0x03
 #define MCP3423_CONF_MSK_CH0 0x00
-#define MCP3423_CONF_MSK_CH1 0x10
+#define MCP3423_CONF_MSK_CH1 0x20
 #define MCP3423_CONF_MSK_RDY0 0x00
 #define MCP3423_CONF_MSK_RDY1 0x80
 #define MCP3423_CONF_MSK_SPS4 0x0C
@@ -40,9 +40,6 @@
 #define MCP3423_CONF_MSK_SPS240 0x00
 #define MCP3423_CONF_MSK_MODE_CONT 0x10
 #define MCP3423_CONF_MSK_MODE_ONE_SHOT 0x00
-
-#define MCP3423_CONF_MSK_WR_DEFAULT \
-	(MCP3423_CONF_MSK_RDY1 | MCP3423_CONF_MSK_MODE_ONE_SHOT)
 
 typedef enum {
 	S_READ_CH_0_W = 0,
@@ -58,11 +55,8 @@ typedef struct {
 
 	uint8_t cfg_sps;
 	uint8_t cfg_gain;
-
 	uint8_t cfg_sps_new;
 	uint8_t cfg_gain_new;
-
-	bool cfg_update;
 
 	int32_t ch0_current;
 	int32_t ch1_current;

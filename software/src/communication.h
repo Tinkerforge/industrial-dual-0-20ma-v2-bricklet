@@ -155,7 +155,6 @@ typedef struct {
 	uint8_t config;
 } __attribute__((__packed__)) GetChannelLEDStatusConfig_Response;
 
-
 // Function prototypes
 BootloaderHandleMessageResponse set_sample_rate(const SetSampleRate *data);
 BootloaderHandleMessageResponse get_sample_rate(const GetSampleRate *data, GetSampleRate_Response *response);

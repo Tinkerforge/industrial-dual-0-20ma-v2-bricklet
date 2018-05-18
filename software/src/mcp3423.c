@@ -28,6 +28,43 @@
 
 MCP3423_t mcp3423;
 
+static int32_t get_calculated_current(uint8_t *i2c_fifo_buf) {
+	int32_t adc_counts = 0;
+	int32_t calc_current = 0;
+
+	switch(mcp3423.cfg_sps) {
+		case MCP3423_CONF_MSK_SPS240: { // LSB: 1mV, 12 bit
+			adc_counts = (i2c_fifo_buf[1] | ((i2c_fifo_buf[0] & 0x0F) << 8));
+			calc_current = (adc_counts * 1000000) / 91;
+
+			break;
+		}
+
+		case MCP3423_CONF_MSK_SPS60: { // LSB: 250µV, 14 bit
+			adc_counts = (i2c_fifo_buf[1] | ((i2c_fifo_buf[0] & 0x3F) << 8));
+			calc_current = (adc_counts * 250000) / 91;
+
+			break;
+		}
+
+		case MCP3423_CONF_MSK_SPS15: { // LSB: 62.5µV, 16 bit
+			adc_counts = (i2c_fifo_buf[1] | (i2c_fifo_buf[0] << 8));
+			calc_current = (adc_counts * 62500) / 91;
+
+			break;
+		}
+
+		case MCP3423_CONF_MSK_SPS4: { // LSB: 15.625µV, 18 bit
+			adc_counts = (i2c_fifo_buf[2] | (i2c_fifo_buf[1] << 8) | ((i2c_fifo_buf[0] & 0x03) << 16));
+			calc_current = (adc_counts * 15625) / 91;
+
+			break;
+		}
+	}
+
+	return calc_current;
+}
+
 static void do_read(void) {
 	XMC_USIC_CH_RXFIFO_Flush(mcp3423.i2c_fifo.i2c);
 	XMC_USIC_CH_TXFIFO_Flush(mcp3423.i2c_fifo.i2c);
@@ -46,9 +83,10 @@ void mcp3423_init(void) {
 	// Initial config
 	mcp3423.ch0_current = 0;
 	mcp3423.ch1_current = 0;
-	mcp3423.cfg_update = false;
 	mcp3423.cfg_sps = (uint8_t)MCP3423_CONF_MSK_SPS4;
 	mcp3423.cfg_gain = (uint8_t)MCP3423_CONF_MSK_Gx1;
+	mcp3423.cfg_sps_new = mcp3423.cfg_sps;
+	mcp3423.cfg_gain_new = mcp3423.cfg_gain;
 
 	// Setup I2C FIFO
 	mcp3423.i2c_fifo.baudrate = MCP3423_I2C_BAUDRATE;
@@ -74,9 +112,9 @@ void mcp3423_init(void) {
 
 	i2c_fifo_init(&mcp3423.i2c_fifo);
 
-	// Start reading channel 0
+	// Configure the sensor and initiate a conversion on channel 0
 	mcp3423.i2c_fifo_buf[0] = \
-		(MCP3423_CONF_MSK_WR_DEFAULT | MCP3423_CONF_MSK_CH0 | mcp3423.cfg_sps | mcp3423.cfg_gain);
+		(mcp3423.cfg_gain | mcp3423.cfg_sps | MCP3423_CONF_MSK_MODE_ONE_SHOT | MCP3423_CONF_MSK_CH0 | MCP3423_CONF_MSK_RDY1);
 
 	i2c_fifo_write_direct(&mcp3423.i2c_fifo, 1, &mcp3423.i2c_fifo_buf[0], true);
 
@@ -85,7 +123,6 @@ void mcp3423_init(void) {
 
 void mcp3423_tick(void) {
 	uint8_t config = 0;
-	uint32_t raw_current = 0;
 
 	I2CFifoState fifo_state = i2c_fifo_next_state(&mcp3423.i2c_fifo);
 
@@ -127,22 +164,16 @@ void mcp3423_tick(void) {
 					config = mcp3423.i2c_fifo_buf[2];
 				}
 
-				if(!(config & 0x80)) {
-					logd("[+] mcp3423_tick(): READ CH0: i2c_fifo_buf[0] = %d\n\r", mcp3423.i2c_fifo_buf[0]);
-					logd("[+] mcp3423_tick(): READ CH0: i2c_fifo_buf[1] = %d\n\r", mcp3423.i2c_fifo_buf[1]);
-					logd("[+] mcp3423_tick(): READ CH0: i2c_fifo_buf[2] = %d\n\r", mcp3423.i2c_fifo_buf[2]);
-					logd("[+] mcp3423_tick(): READ CH0: i2c_fifo_buf[3] = %d\n\r\n\r", mcp3423.i2c_fifo_buf[3]);
-
-					// Channel 0 conversion is ready
-
-					// TODO: Calculate and store the value
+				if(!(config & MCP3423_CONF_MSK_RDY1)) {
+					// Get channel 0 current
+					mcp3423.ch0_current = get_calculated_current(mcp3423.i2c_fifo_buf);
 
 					// Start reading channel 1
 					XMC_USIC_CH_RXFIFO_Flush(mcp3423.i2c_fifo.i2c);
 					XMC_USIC_CH_TXFIFO_Flush(mcp3423.i2c_fifo.i2c);
 
 					mcp3423.i2c_fifo_buf[0] = \
-						(MCP3423_CONF_MSK_WR_DEFAULT | MCP3423_CONF_MSK_CH1 | mcp3423.cfg_sps | mcp3423.cfg_gain);
+						(mcp3423.cfg_gain | mcp3423.cfg_sps | MCP3423_CONF_MSK_MODE_ONE_SHOT | MCP3423_CONF_MSK_CH1 | MCP3423_CONF_MSK_RDY1);
 
 					i2c_fifo_write_direct(&mcp3423.i2c_fifo, 1, &mcp3423.i2c_fifo_buf[0], true);
 
@@ -187,21 +218,14 @@ void mcp3423_tick(void) {
 				XMC_USIC_CH_RXFIFO_Flush(mcp3423.i2c_fifo.i2c);
 				XMC_USIC_CH_TXFIFO_Flush(mcp3423.i2c_fifo.i2c);
 
-				if(!(config & 0x80)) {
-					logd("[+] mcp3423_tick(): READ CH1: i2c_fifo_buf[0] = %d\n\r", mcp3423.i2c_fifo_buf[0]);
-					logd("[+] mcp3423_tick(): READ CH1: i2c_fifo_buf[1] = %d\n\r", mcp3423.i2c_fifo_buf[1]);
-					logd("[+] mcp3423_tick(): READ CH1: i2c_fifo_buf[2] = %d\n\r", mcp3423.i2c_fifo_buf[2]);
-					logd("[+] mcp3423_tick(): READ CH1: i2c_fifo_buf[3] = %d\n\r\n\r", mcp3423.i2c_fifo_buf[3]);
-
-					// Channel 1 conversion is ready
-
-					// TODO: Calculate and store the value
+				if(!(config & MCP3423_CONF_MSK_RDY1)) {
+					// Get channel 1 current
+					mcp3423.ch1_current = get_calculated_current(mcp3423.i2c_fifo_buf);
 
 					// We will start a new cycle, update config if required
-					if(mcp3423.cfg_update) {
+					if((mcp3423.cfg_sps != mcp3423.cfg_sps_new) || (mcp3423.cfg_gain != mcp3423.cfg_gain_new)) {
 						mcp3423.cfg_sps = mcp3423.cfg_sps_new;
 						mcp3423.cfg_gain = mcp3423.cfg_gain_new;
-						mcp3423.cfg_update = false;
 					}
 
 					// Start reading channel 0
@@ -209,7 +233,7 @@ void mcp3423_tick(void) {
 					XMC_USIC_CH_TXFIFO_Flush(mcp3423.i2c_fifo.i2c);
 
 					mcp3423.i2c_fifo_buf[0] = \
-						(MCP3423_CONF_MSK_WR_DEFAULT | MCP3423_CONF_MSK_CH0 | mcp3423.cfg_sps | mcp3423.cfg_gain);
+						(mcp3423.cfg_gain | mcp3423.cfg_sps | MCP3423_CONF_MSK_MODE_ONE_SHOT | MCP3423_CONF_MSK_CH0 | MCP3423_CONF_MSK_RDY1);
 
 					i2c_fifo_write_direct(&mcp3423.i2c_fifo, 1, &mcp3423.i2c_fifo_buf[0], true);
 
