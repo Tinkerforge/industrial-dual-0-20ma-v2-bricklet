@@ -27,25 +27,14 @@
 
 #include "mcp3423.h"
 
-uint8_t channel_based_handle_channel = 0;
-CallbackValue channel_based_cbv[CHANNEL_BASED_COUNT];
+uint8_t current_callback_channel = 0;
+CallbackValue_int32_t callback_values_current[CALLBACK_VALUE_CHANNEL_NUM];
 
 BootloaderHandleMessageResponse handle_message(const void *message, void *response) {
 	switch(tfp_get_fid_from_message(message)) {
-		case FID_GET_CURRENT: {
-			return channel_based_get_callback_value(message,
-			                                        response,
-			                                        &channel_based_cbv[((OnChannelGetCallbackValue *)message)->channel]);
-		}
-		case FID_SET_CURRENT_CALLBACK_CONFIGURATION: {
-			return channel_based_set_callback_value_callback_configuration(message,
-			                                                               &channel_based_cbv[((OnChannelSetCallbackValueCallbackConfiguration *)message)->channel]);
-		}
-		case FID_GET_CURRENT_CALLBACK_CONFIGURATION: {
-			return channel_based_get_callback_value_callback_configuration(message,
-			                                                               response,
-			                                                               &channel_based_cbv[((OnChannelGetCallbackValueCallbackConfiguration *)message)->channel]);
-		}
+		case FID_GET_CURRENT: get_callback_value_int32_t(message, response, callback_values_current);
+		case FID_SET_CURRENT_CALLBACK_CONFIGURATION: return set_callback_value_callback_configuration_int32_t(message, callback_values_current);
+		case FID_GET_CURRENT_CALLBACK_CONFIGURATION: return get_callback_value_callback_configuration_int32_t(message, response, callback_values_current);
 		case FID_SET_SAMPLE_RATE: return set_sample_rate(message);
 		case FID_GET_SAMPLE_RATE: return get_sample_rate(message, response);
 		case FID_SET_GAIN: return set_gain(message);
@@ -185,12 +174,10 @@ BootloaderHandleMessageResponse get_channel_led_status_config(const GetChannelLE
 }
 
 bool handle_current_callback(void) {
-	bool ret = channel_based_handle_callback_value_callback(&channel_based_cbv[channel_based_handle_channel],
-	                                                        FID_CALLBACK_CURRENT,
-	                                                        channel_based_handle_channel);
+	bool ret = handle_callback_value_callback_int32_t(callback_values_current, current_callback_channel, FID_CALLBACK_CURRENT);
 
-	if(!(++channel_based_handle_channel < CHANNEL_BASED_COUNT)) {
-		channel_based_handle_channel = 0;
+	if(++current_callback_channel >= CALLBACK_VALUE_CHANNEL_NUM) {
+		current_callback_channel = 0;
 	}
 
 	return ret;
@@ -201,9 +188,7 @@ void communication_tick(void) {
 }
 
 void communication_init(void) {
-	for(uint8_t i = 0; i < CHANNEL_BASED_COUNT; i++) {
-		channel_based_callback_value_init(&channel_based_cbv[i], mcp3423_get_current);
-	}
+	callback_value_init_int32_t(callback_values_current, mcp3423_get_current);
 
 	communication_callback_init();
 }
