@@ -32,7 +32,7 @@ CallbackValue_int32_t callback_values_current[CALLBACK_VALUE_CHANNEL_NUM];
 
 BootloaderHandleMessageResponse handle_message(const void *message, void *response) {
 	switch(tfp_get_fid_from_message(message)) {
-		case FID_GET_CURRENT: get_callback_value_int32_t(message, response, callback_values_current);
+		case FID_GET_CURRENT: return get_callback_value_int32_t(message, response, callback_values_current);
 		case FID_SET_CURRENT_CALLBACK_CONFIGURATION: return set_callback_value_callback_configuration_int32_t(message, callback_values_current);
 		case FID_GET_CURRENT_CALLBACK_CONFIGURATION: return get_callback_value_callback_configuration_int32_t(message, response, callback_values_current);
 		case FID_SET_SAMPLE_RATE: return set_sample_rate(message);
