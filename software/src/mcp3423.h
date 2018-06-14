@@ -24,6 +24,8 @@
 
 #include <stdint.h>
 
+#include "configs/config.h"
+#include "bricklib2/utility/led_flicker.h"
 #include "bricklib2/hal/i2c_fifo/i2c_fifo.h"
 
 #define MCP3423_CONF_MSK_Gx1 0x00
@@ -40,6 +42,17 @@
 #define MCP3423_CONF_MSK_SPS240 0x00
 #define MCP3423_CONF_MSK_MODE_CONT 0x10
 #define MCP3423_CONF_MSK_MODE_ONE_SHOT 0x00
+
+typedef struct {
+	int32_t min;
+	int32_t max;
+	uint8_t pin;
+	uint8_t config;
+	uint8_t config_old;
+	XMC_GPIO_PORT_t *port;
+	uint8_t config_ch_status;
+	LEDFlickerState channel_led_flicker_state;
+} CHANNEL_LED_CONFIG_t;
 
 typedef enum {
 	S_READ_CH_0_W = 0,
@@ -58,8 +71,9 @@ typedef struct {
 	uint8_t cfg_sps_new;
 	uint8_t cfg_gain_new;
 
-	int32_t ch0_current;
-	int32_t ch1_current;
+	int32_t channel_current[CALLBACK_VALUE_CHANNEL_NUM];
+
+	CHANNEL_LED_CONFIG_t channel_leds[CALLBACK_VALUE_CHANNEL_NUM];
 } MCP3423_t;
 
 extern MCP3423_t mcp3423;

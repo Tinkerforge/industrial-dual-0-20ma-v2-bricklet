@@ -21,12 +21,25 @@
 
 #include "mcp3423.h"
 
-#include "bricklib2/logging/logging.h"
 #include "configs/config_mcp3423.h"
+#include "bricklib2/logging/logging.h"
+#include "bricklib2/hal/ccu4_pwm/ccu4_pwm.h"
+#include "bricklib2/hal/system_timer/system_timer.h"
 
 #include "communication.h"
 
 MCP3423_t mcp3423;
+
+XMC_GPIO_CONFIG_t channel_led_gpio_config = {
+	.mode         = XMC_GPIO_MODE_OUTPUT_PUSH_PULL,
+	.output_level = XMC_GPIO_OUTPUT_LEVEL_HIGH,
+};
+
+const XMC_GPIO_CONFIG_t channel_led_pwm_config	= {
+	.mode             = XMC_GPIO_MODE_OUTPUT_PUSH_PULL_ALT2,
+	.input_hysteresis = XMC_GPIO_INPUT_HYSTERESIS_STANDARD,
+	.output_level     = XMC_GPIO_OUTPUT_LEVEL_LOW,
+};
 
 static int32_t get_calculated_current(uint8_t *i2c_fifo_buf) {
 	int32_t adc_counts = 0;
@@ -81,8 +94,10 @@ void mcp3423_init(void) {
 	logd("[+] mcp3423_init()\n\r");
 
 	// Initial config
-	mcp3423.ch0_current = 0;
-	mcp3423.ch1_current = 0;
+	for (uint8_t i = 0; i < CALLBACK_VALUE_CHANNEL_NUM; i++) {
+		mcp3423.channel_current[i] = 0;
+	}
+
 	mcp3423.cfg_sps = (uint8_t)MCP3423_CONF_MSK_SPS4;
 	mcp3423.cfg_gain = (uint8_t)MCP3423_CONF_MSK_Gx1;
 	mcp3423.cfg_sps_new = mcp3423.cfg_sps;
@@ -111,6 +126,30 @@ void mcp3423_init(void) {
 	mcp3423.i2c_fifo.address = (uint8_t)MCP3423_I2C_ADDRESS;
 
 	i2c_fifo_init(&mcp3423.i2c_fifo);
+
+	// Channel LED init
+	for(uint8_t i = 0; i < CALLBACK_VALUE_CHANNEL_NUM; i++) {
+		// Init channel LEDs
+		mcp3423.channel_leds[i].port = (XMC_GPIO_PORT_t *)PORT1_BASE;
+		mcp3423.channel_leds[i].pin = i + 1;
+		mcp3423.channel_leds[i].pin = i + 1;
+
+		mcp3423.channel_leds[i].channel_led_flicker_state.config = \
+			LED_FLICKER_CONFIG_OFF;
+		mcp3423.channel_leds[i].config = \
+			INDUSTRIAL_DUAL_0_20MA_V2_CHANNEL_LED_CONFIG_SHOW_CHANNEL_STATUS;
+		mcp3423.channel_leds[i].config_old = \
+			INDUSTRIAL_DUAL_0_20MA_V2_CHANNEL_LED_CONFIG_SHOW_CHANNEL_STATUS;
+
+		mcp3423.channel_leds[i].min = 10000000;
+		mcp3423.channel_leds[i].max = 22505322;
+		mcp3423.channel_leds[i].config_ch_status = \
+			INDUSTRIAL_DUAL_0_20MA_V2_CHANNEL_LED_STATUS_CONFIG_THRESHOLD;
+
+		// PWM frequency = Core clock / 100
+		ccu4_pwm_init(mcp3423.channel_leds[i].port, mcp3423.channel_leds[i].pin, i + 1, 100);
+		ccu4_pwm_set_duty_cycle(i + 1, 0);
+	}
 
 	// Configure the sensor and initiate a conversion on channel 0
 	mcp3423.i2c_fifo_buf[0] = \
@@ -166,7 +205,7 @@ void mcp3423_tick(void) {
 
 				if(!(config & MCP3423_CONF_MSK_RDY1)) {
 					// Get channel 0 current
-					mcp3423.ch0_current = get_calculated_current(mcp3423.i2c_fifo_buf);
+					mcp3423.channel_current[0] = get_calculated_current(mcp3423.i2c_fifo_buf);
 
 					// Start reading channel 1
 					XMC_USIC_CH_RXFIFO_Flush(mcp3423.i2c_fifo.i2c);
@@ -220,7 +259,7 @@ void mcp3423_tick(void) {
 
 				if(!(config & MCP3423_CONF_MSK_RDY1)) {
 					// Get channel 1 current
-					mcp3423.ch1_current = get_calculated_current(mcp3423.i2c_fifo_buf);
+					mcp3423.channel_current[1] = get_calculated_current(mcp3423.i2c_fifo_buf);
 
 					// We will start a new cycle, update config if required
 					if((mcp3423.cfg_sps != mcp3423.cfg_sps_new) || (mcp3423.cfg_gain != mcp3423.cfg_gain_new)) {
@@ -251,16 +290,79 @@ void mcp3423_tick(void) {
 		default:
 			break;
 	}
+
+	// Manage channel LEDs
+	for(uint8_t i = 0; i < CALLBACK_VALUE_CHANNEL_NUM; i++) {
+		if (mcp3423.channel_leds[i].config_old != mcp3423.channel_leds[i].config) {
+			// Other -> Show Channel Status
+			if (mcp3423.channel_leds[i].config == INDUSTRIAL_DUAL_0_20MA_V2_CHANNEL_LED_CONFIG_SHOW_CHANNEL_STATUS) {
+				XMC_GPIO_Init(mcp3423.channel_leds[i].port, mcp3423.channel_leds[i].pin, &channel_led_pwm_config);
+			}
+			// Show Channel Status -> Other
+			else if (mcp3423.channel_leds[i].config_old == INDUSTRIAL_DUAL_0_20MA_V2_CHANNEL_LED_CONFIG_SHOW_CHANNEL_STATUS) {
+				XMC_GPIO_Init(mcp3423.channel_leds[i].port, mcp3423.channel_leds[i].pin, &channel_led_gpio_config);
+			}
+
+			mcp3423.channel_leds[i].config_old = mcp3423.channel_leds[i].config;
+		}
+
+		switch (mcp3423.channel_leds[i].config) {
+			case INDUSTRIAL_DUAL_0_20MA_V2_CHANNEL_LED_CONFIG_OFF:
+				mcp3423.channel_leds[i].channel_led_flicker_state.config = LED_FLICKER_CONFIG_OFF;
+				XMC_GPIO_SetOutputHigh(mcp3423.channel_leds[i].port, mcp3423.channel_leds[i].pin);
+
+				break;
+
+			case INDUSTRIAL_DUAL_0_20MA_V2_CHANNEL_LED_CONFIG_ON:
+				mcp3423.channel_leds[i].channel_led_flicker_state.config = LED_FLICKER_CONFIG_ON;
+				XMC_GPIO_SetOutputLow(mcp3423.channel_leds[i].port, mcp3423.channel_leds[i].pin);
+
+				break;
+
+			case INDUSTRIAL_DUAL_0_20MA_V2_CHANNEL_LED_CONFIG_SHOW_HEARTBEAT:
+				mcp3423.channel_leds[i].channel_led_flicker_state.config = LED_FLICKER_CONFIG_HEARTBEAT;
+
+				led_flicker_tick(&mcp3423.channel_leds[i].channel_led_flicker_state,
+								 system_timer_get_ms(),
+								 mcp3423.channel_leds[i].port,
+								 mcp3423.channel_leds[i].pin);
+
+				break;
+
+			case INDUSTRIAL_DUAL_0_20MA_V2_CHANNEL_LED_CONFIG_SHOW_CHANNEL_STATUS:
+				mcp3423.channel_leds[i].channel_led_flicker_state.config = LED_FLICKER_CONFIG_OFF;
+
+				if (mcp3423.channel_leds[i].config_ch_status == INDUSTRIAL_DUAL_0_20MA_V2_CHANNEL_LED_STATUS_CONFIG_THRESHOLD) {
+					if (mcp3423.channel_current[i] > mcp3423.channel_leds[i].min) {
+						ccu4_pwm_set_duty_cycle(i + 1, 100);
+					}
+					else {
+						ccu4_pwm_set_duty_cycle(i + 1, 0);
+					}
+				}
+				else if (mcp3423.channel_leds[i].config_ch_status == INDUSTRIAL_DUAL_0_20MA_V2_CHANNEL_LED_STATUS_CONFIG_INTENSITY) {
+					if (mcp3423.channel_current[i] > mcp3423.channel_leds[i].max) {
+						ccu4_pwm_set_duty_cycle(i + 1, 100);
+					}
+					else if (mcp3423.channel_current[i] < mcp3423.channel_leds[i].min) {
+						ccu4_pwm_set_duty_cycle(i + 1, 0);
+					}
+					else {
+						int32_t scaled_max = mcp3423.channel_leds[i].max - mcp3423.channel_leds[i].min;
+						int32_t scaled_channel_current = mcp3423.channel_current[i] - mcp3423.channel_leds[i].min;
+						int32_t pwm_ds = (scaled_channel_current * 100) / scaled_max;
+						ccu4_pwm_set_duty_cycle(i + 1, (uint16_t)pwm_ds);
+					}
+				}
+
+				break;
+
+			default:
+				break;
+		}
+	}
 }
 
 int32_t mcp3423_get_current(uint8_t channel) {
-	if(channel == 0) {
-		return mcp3423.ch0_current;
-	}
-	else if (channel == 1) {
-		return mcp3423.ch1_current;
-	}
-	else {
-		return 0;
-	}
+	return mcp3423.channel_current[channel];
 }

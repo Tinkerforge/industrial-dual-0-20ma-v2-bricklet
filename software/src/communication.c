@@ -152,6 +152,11 @@ BootloaderHandleMessageResponse get_gain(const GetGain *data, GetGain_Response *
 }
 
 BootloaderHandleMessageResponse set_channel_led_config(const SetChannelLEDConfig *data) {
+	if(data->channel > CALLBACK_VALUE_CHANNEL_NUM - 1) {
+		return HANDLE_MESSAGE_RESPONSE_INVALID_PARAMETER;
+	}
+
+	mcp3423.channel_leds[data->channel].config = data->config;
 
 	return HANDLE_MESSAGE_RESPONSE_EMPTY;
 }
@@ -159,16 +164,41 @@ BootloaderHandleMessageResponse set_channel_led_config(const SetChannelLEDConfig
 BootloaderHandleMessageResponse get_channel_led_config(const GetChannelLEDConfig *data, GetChannelLEDConfig_Response *response) {
 	response->header.length = sizeof(GetChannelLEDConfig_Response);
 
+	if(data->channel > CALLBACK_VALUE_CHANNEL_NUM - 1) {
+		return HANDLE_MESSAGE_RESPONSE_INVALID_PARAMETER;
+	}
+
+	response->config = mcp3423.channel_leds[data->channel].config;
+
 	return HANDLE_MESSAGE_RESPONSE_NEW_MESSAGE;
 }
 
 BootloaderHandleMessageResponse set_channel_led_status_config(const SetChannelLEDStatusConfig *data) {
+	if(data->channel > CALLBACK_VALUE_CHANNEL_NUM - 1) {
+		return HANDLE_MESSAGE_RESPONSE_INVALID_PARAMETER;
+	}
+
+	if (data->min > 22505322 || data->max > 22505322 || (data->min >= data->max)) {
+		return HANDLE_MESSAGE_RESPONSE_INVALID_PARAMETER;
+	}
+
+	mcp3423.channel_leds[data->channel].min = data->min;
+	mcp3423.channel_leds[data->channel].max = data->max;
+	mcp3423.channel_leds[data->channel].config_ch_status = data->config;
 
 	return HANDLE_MESSAGE_RESPONSE_EMPTY;
 }
 
 BootloaderHandleMessageResponse get_channel_led_status_config(const GetChannelLEDStatusConfig *data, GetChannelLEDStatusConfig_Response *response) {
 	response->header.length = sizeof(GetChannelLEDStatusConfig_Response);
+
+	if(data->channel > CALLBACK_VALUE_CHANNEL_NUM - 1) {
+		return HANDLE_MESSAGE_RESPONSE_INVALID_PARAMETER;
+	}
+
+	response->min = mcp3423.channel_leds[data->channel].min;
+	response->max = mcp3423.channel_leds[data->channel].max;
+	response->config = mcp3423.channel_leds[data->channel].config_ch_status;
 
 	return HANDLE_MESSAGE_RESPONSE_NEW_MESSAGE;
 }
