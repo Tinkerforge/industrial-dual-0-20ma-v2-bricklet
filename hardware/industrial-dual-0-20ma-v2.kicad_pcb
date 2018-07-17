@@ -1,9 +1,9 @@
-(kicad_pcb (version 4) (host pcbnew 4.0.2+dfsg1-stable)
+(kicad_pcb (version 4) (host pcbnew 4.0.7-e2-6376~61~ubuntu18.04.1)
 
   (general
     (links 82)
     (no_connects 0)
-    (area 97.609659 37.858699 137.993121 78.242161)
+    (area 96.945139 37.195139 280.14286 166.44)
     (thickness 1.6002)
     (drawings 25)
     (tracks 361)
@@ -43,7 +43,7 @@
   )
 
   (setup
-    (last_trace_width 0.55)
+    (last_trace_width 0.14986)
     (user_trace_width 0.2)
     (user_trace_width 0.25)
     (user_trace_width 0.3)
@@ -5947,7 +5947,7 @@
       (net 4 GND))
   )
 
-  (module kicad-libraries:QFN24-4x4mm-0.5mm (layer Front) (tedit 590CA070) (tstamp 5A8E9941)
+  (module kicad-libraries:QFN24-4x4mm-0.5mm (layer Front) (tedit 5B4DF4DD) (tstamp 5A8E9941)
     (at 111.98 48.2 270)
     (tags "QFN 24pin 0.5")
     (path /5A8FA874)
@@ -5955,7 +5955,7 @@
     (fp_text reference U1 (at 0 -0.4 270) (layer F.Fab)
       (effects (font (size 0.3 0.3) (thickness 0.075)))
     )
-    (fp_text value XMC1XXX24 (at 0 0.8 270) (layer F.Fab)
+    (fp_text value XMC11XX24 (at 0 0.8 270) (layer F.Fab)
       (effects (font (size 0.3 0.3) (thickness 0.075)))
     )
     (fp_line (start -1 -2) (end 2 -2) (layer F.Fab) (width 0.15))
@@ -7340,7 +7340,7 @@
   (segment (start 129.9829 59.317) (end 130.2 59.0999) (width 0.29972) (layer Front) (net 3) (tstamp 51667A9F))
   (segment (start 119 54.325) (end 119 52.6751) (width 0.70104) (layer Front) (net 3))
   (segment (start 114.075 60.75) (end 113.12426 60.75) (width 0.70104) (layer Front) (net 3))
-  (segment (start 112.95 44.4) (end 112.37 44.4) (width 0.55) (layer Front) (net 4) (status 400000))
+  (segment (start 112.95 44.4) (end 112.37 44.4) (width 0.55) (layer Front) (net 4))
   (via (at 112.37 44.4) (size 0.55) (drill 0.25) (layers Front Back) (net 4))
   (segment (start 111.48 52.58) (end 105.18 52.58) (width 0.25) (layer Front) (net 4))
   (via (at 103.3 49.4) (size 0.55) (drill 0.25) (layers Front Back) (net 4))
