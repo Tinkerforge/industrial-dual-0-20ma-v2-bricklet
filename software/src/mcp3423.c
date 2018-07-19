@@ -141,10 +141,10 @@ void mcp3423_init(void) {
 		mcp3423.channel_leds[i].config_old = \
 			INDUSTRIAL_DUAL_0_20MA_V2_CHANNEL_LED_CONFIG_SHOW_CHANNEL_STATUS;
 
-		mcp3423.channel_leds[i].min = 10000000;
-		mcp3423.channel_leds[i].max = 22505322;
+		mcp3423.channel_leds[i].min = 4000000;
+		mcp3423.channel_leds[i].max = 20000000;
 		mcp3423.channel_leds[i].config_ch_status = \
-			INDUSTRIAL_DUAL_0_20MA_V2_CHANNEL_LED_STATUS_CONFIG_THRESHOLD;
+			INDUSTRIAL_DUAL_0_20MA_V2_CHANNEL_LED_STATUS_CONFIG_INTENSITY;
 
 		// PWM frequency = Core clock / 100
 		ccu4_pwm_init(mcp3423.channel_leds[i].port, mcp3423.channel_leds[i].pin, i + 1, 100);
