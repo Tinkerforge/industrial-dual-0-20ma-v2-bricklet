@@ -178,7 +178,7 @@ BootloaderHandleMessageResponse set_channel_led_status_config(const SetChannelLE
 		return HANDLE_MESSAGE_RESPONSE_INVALID_PARAMETER;
 	}
 
-	if (data->min > 22505322 || data->max > 22505322 || (data->min >= data->max)) {
+	if (data->min > 22505322 || data->max > 22505322) {
 		return HANDLE_MESSAGE_RESPONSE_INVALID_PARAMETER;
 	}
 

@@ -333,25 +333,51 @@ void mcp3423_tick(void) {
 				mcp3423.channel_leds[i].channel_led_flicker_state.config = LED_FLICKER_CONFIG_OFF;
 
 				if (mcp3423.channel_leds[i].config_ch_status == INDUSTRIAL_DUAL_0_20MA_V2_CHANNEL_LED_STATUS_CONFIG_THRESHOLD) {
-					if (mcp3423.channel_current[i] > mcp3423.channel_leds[i].min) {
-						ccu4_pwm_set_duty_cycle(i + 1, 100);
+					if ((mcp3423.channel_leds[i].min == 0) && (mcp3423.channel_leds[i].max > 0)) {
+						if (mcp3423.channel_current[i] < mcp3423.channel_leds[i].max) {
+							ccu4_pwm_set_duty_cycle(i + 1, 100);
+						}
+						else {
+							ccu4_pwm_set_duty_cycle(i + 1, 0);
+						}
 					}
 					else {
-						ccu4_pwm_set_duty_cycle(i + 1, 0);
+						if (mcp3423.channel_current[i] > mcp3423.channel_leds[i].min) {
+							ccu4_pwm_set_duty_cycle(i + 1, 100);
+						}
+						else {
+							ccu4_pwm_set_duty_cycle(i + 1, 0);
+						}
 					}
 				}
 				else if (mcp3423.channel_leds[i].config_ch_status == INDUSTRIAL_DUAL_0_20MA_V2_CHANNEL_LED_STATUS_CONFIG_INTENSITY) {
-					if (mcp3423.channel_current[i] > mcp3423.channel_leds[i].max) {
-						ccu4_pwm_set_duty_cycle(i + 1, 100);
-					}
-					else if (mcp3423.channel_current[i] < mcp3423.channel_leds[i].min) {
-						ccu4_pwm_set_duty_cycle(i + 1, 0);
+					if (mcp3423.channel_leds[i].min > mcp3423.channel_leds[i].max) {
+						if (mcp3423.channel_current[i] > mcp3423.channel_leds[i].min) {
+							ccu4_pwm_set_duty_cycle(i + 1, 0);
+						}
+						else if (mcp3423.channel_current[i] < mcp3423.channel_leds[i].max) {
+							ccu4_pwm_set_duty_cycle(i + 1, 100);
+						}
+						else {
+							int32_t range = mcp3423.channel_leds[i].min - mcp3423.channel_leds[i].max;
+							int32_t scaled_channel_current = mcp3423.channel_current[i] - mcp3423.channel_leds[i].max;
+							int32_t pwm_ds = (scaled_channel_current * 100) / range;
+							ccu4_pwm_set_duty_cycle(i + 1, (uint16_t)(100 - pwm_ds));
+						}
 					}
 					else {
-						int32_t scaled_max = mcp3423.channel_leds[i].max - mcp3423.channel_leds[i].min;
-						int32_t scaled_channel_current = mcp3423.channel_current[i] - mcp3423.channel_leds[i].min;
-						int32_t pwm_ds = (scaled_channel_current * 100) / scaled_max;
-						ccu4_pwm_set_duty_cycle(i + 1, (uint16_t)pwm_ds);
+						if (mcp3423.channel_current[i] > mcp3423.channel_leds[i].max) {
+							ccu4_pwm_set_duty_cycle(i + 1, 100);
+						}
+						else if (mcp3423.channel_current[i] < mcp3423.channel_leds[i].min) {
+							ccu4_pwm_set_duty_cycle(i + 1, 0);
+						}
+						else {
+							int32_t range = mcp3423.channel_leds[i].max - mcp3423.channel_leds[i].min;
+							int32_t scaled_channel_current = mcp3423.channel_current[i] - mcp3423.channel_leds[i].min;
+							int32_t pwm_ds = (scaled_channel_current * 100) / range;
+							ccu4_pwm_set_duty_cycle(i + 1, (uint16_t)pwm_ds);
+						}
 					}
 				}
 
