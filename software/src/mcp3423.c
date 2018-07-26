@@ -132,7 +132,6 @@ void mcp3423_init(void) {
 		// Init channel LEDs
 		mcp3423.channel_leds[i].port = (XMC_GPIO_PORT_t *)PORT1_BASE;
 		mcp3423.channel_leds[i].pin = i + 1;
-		mcp3423.channel_leds[i].pin = i + 1;
 
 		mcp3423.channel_leds[i].channel_led_flicker_state.config = \
 			LED_FLICKER_CONFIG_OFF;
