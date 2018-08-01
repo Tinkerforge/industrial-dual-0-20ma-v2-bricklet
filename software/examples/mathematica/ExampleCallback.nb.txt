@@ -1,0 +1,31 @@
+Needs["NETLink`"]
+LoadNETAssembly["Tinkerforge",NotebookDirectory[]<>"../../.."]
+
+host="localhost"
+port=4223
+uid="XYZ"(*Change XYZ to the UID of your Industrial Dual 0-20mA Bricklet 2.0*)
+
+(*Create IPConnection and device object*)
+ipcon=NETNew["Tinkerforge.IPConnection"]
+id020=NETNew["Tinkerforge.BrickletIndustrialDual020mAV2",uid,ipcon]
+ipcon@Connect[host,port]
+
+(*Callback function for current callback*)
+CurrentCB[sender_,channel_,current_]:=
+ Module[{},
+  Print["Channel: "<>ToString[channel]];
+  Print["Current: "<>ToString[N[Quantity[current,"mA/1000000"]]]]
+ ]
+
+AddEventHandler[id020@CurrentCallback,CurrentCB]
+
+(*Set period for current (channel 0) callback to 1s (1000ms) without a threshold*)
+option=Tinkerforge`BrickletIndustrialDual020mAV2`THRESHOLDUOPTIONUOFF
+id020@SetCurrentCallbackConfiguration[0,1000,False,option,0,0]
+
+Input["Click OK to exit"]
+
+(*Clean up*)
+ipcon@Disconnect[]
+ReleaseNETObject[id020]
+ReleaseNETObject[ipcon]
