@@ -24,7 +24,7 @@ Module ExampleThreshold
         ' Register voltage callback to subroutine CurrentCB
         AddHandler id020.CurrentCallback, AddressOf CurrentCB
 
-        ' Configure threshold for current "greater than 10 mA"
+        ' Configure threshold for current (channel 0) "greater than 10 mA"
         ' with a debounce period of 10s (10000ms)
         id020.SetCurrentCallbackConfiguration(0, 10000, False, ">"C, 10*1000000, 0)
 

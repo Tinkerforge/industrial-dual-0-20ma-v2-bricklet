@@ -24,7 +24,7 @@ Module ExampleCallback
         ' Register current callback to subroutine CurrentCB
         AddHandler id020.CurrentCallback, AddressOf CurrentCB
 
-        ' Set period for current callback to 1s (1000ms) without a threshold
+        ' Set period for current (channel 0) callback to 1s (1000ms) without a threshold
         id020.SetCurrentCallbackConfiguration(0, 1000, False, "x"C, 0, 0)
 
         Console.WriteLine("Press key to exit")
