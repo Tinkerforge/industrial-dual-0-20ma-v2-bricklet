@@ -43,8 +43,8 @@
                     function (connectReason) {
                         // Get current current from channel 0
                         id020.getCurrent(0,
-                            function (voltage) {
-                                textArea.value += 'Voltage (Channel 0): ' + voltage/1000000.0 + ' mA\n';
+                            function (current) {
+                                textArea.value += 'Current (Channel 0): ' + current/1000000.0 + ' mA\n';
                             },
                             function (error) {
                                 textArea.value += 'Error: ' + error + '\n';

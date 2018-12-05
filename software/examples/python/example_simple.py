@@ -16,8 +16,8 @@ if __name__ == "__main__":
     # Don't use device before ipcon is connected
 
     # Get current current from channel 0
-    voltage = id020.get_current(0)
-    print("Voltage (Channel 0): " + str(voltage/1000000.0) + " mA")
+    current = id020.get_current(0)
+    print("Current (Channel 0): " + str(current/1000000.0) + " mA")
 
     raw_input("Press key to exit\n") # Use input() in Python 3
     ipcon.disconnect()

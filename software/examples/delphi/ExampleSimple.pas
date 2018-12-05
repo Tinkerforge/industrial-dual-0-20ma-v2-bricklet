@@ -24,7 +24,7 @@ var
   e: TExample;
 
 procedure TExample.Execute;
-var voltage: longint;
+var current: longint;
 begin
   { Create IP connection }
   ipcon := TIPConnection.Create;
@@ -37,8 +37,8 @@ begin
   { Don't use device before ipcon is connected }
 
   { Get current current from channel 0 }
-  voltage := id020.GetCurrent(0);
-  WriteLn(Format('Voltage (Channel 0): %f mA', [voltage/1000000.0]));
+  current := id020.GetCurrent(0);
+  WriteLn(Format('Current (Channel 0): %f mA', [current/1000000.0]));
 
   WriteLn('Press key to exit');
   ReadLn;

@@ -17,8 +17,8 @@ ipcon.connect HOST, PORT # Connect to brickd
 # Don't use device before ipcon is connected
 
 # Get current current from channel 0
-voltage = id020.get_current 0
-puts "Voltage (Channel 0): #{voltage/1000000.0} mA"
+current = id020.get_current 0
+puts "Current (Channel 0): #{current/1000000.0} mA"
 
 puts 'Press key to exit'
 $stdin.gets

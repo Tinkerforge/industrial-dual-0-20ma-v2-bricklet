@@ -12,8 +12,8 @@ function octave_example_simple()
     % Don't use device before ipcon is connected
 
     % Get current current from channel 0
-    voltage = id020.getCurrent(0);
-    fprintf("Voltage (Channel 0): %g mA\n", voltage/1000000.0);
+    current = id020.getCurrent(0);
+    fprintf("Current (Channel 0): %g mA\n", current/1000000.0);
 
     input("Press key to exit\n", "s");
     ipcon.disconnect();

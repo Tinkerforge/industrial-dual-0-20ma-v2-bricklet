@@ -18,8 +18,8 @@ ipcon.on(Tinkerforge.IPConnection.CALLBACK_CONNECTED,
     function (connectReason) {
         // Get current current from channel 0
         id020.getCurrent(0,
-            function (voltage) {
-                console.log('Voltage (Channel 0): ' + voltage/1000000.0 + ' mA');
+            function (current) {
+                console.log('Current (Channel 0): ' + current/1000000.0 + ' mA');
             },
             function (error) {
                 console.log('Error: ' + error);

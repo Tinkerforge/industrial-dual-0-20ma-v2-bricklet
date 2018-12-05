@@ -19,8 +19,8 @@ public class ExampleSimple {
 		// Don't use device before ipcon is connected
 
 		// Get current current from channel 0
-		int voltage = id020.getCurrent(0); // Can throw com.tinkerforge.TimeoutException
-		System.out.println("Voltage (Channel 0): " + voltage/1000000.0 + " mA");
+		int current = id020.getCurrent(0); // Can throw com.tinkerforge.TimeoutException
+		System.out.println("Current (Channel 0): " + current/1000000.0 + " mA");
 
 		System.out.println("Press key to exit"); System.in.read();
 		ipcon.disconnect();

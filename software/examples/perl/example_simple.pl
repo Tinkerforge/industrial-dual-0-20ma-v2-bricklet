@@ -15,8 +15,8 @@ $ipcon->connect(&HOST, &PORT); # Connect to brickd
 # Don't use device before ipcon is connected
 
 # Get current current from channel 0
-my $voltage = $id020->get_current(0);
-print "Voltage (Channel 0): " . $voltage/1000000.0 . " mA\n";
+my $current = $id020->get_current(0);
+print "Current (Channel 0): " . $current/1000000.0 . " mA\n";
 
 print "Press key to exit\n";
 <STDIN>;

@@ -24,13 +24,13 @@ int main(void) {
 	// Don't use device before ipcon is connected
 
 	// Get current current from channel 0
-	int32_t voltage;
-	if(industrial_dual_0_20ma_v2_get_current(&id020, 0, &voltage) < 0) {
+	int32_t current;
+	if(industrial_dual_0_20ma_v2_get_current(&id020, 0, &current) < 0) {
 		fprintf(stderr, "Could not get current from channel 0, probably timeout\n");
 		return 1;
 	}
 
-	printf("Voltage (Channel 0): %f mA\n", voltage/1000000.0);
+	printf("Current (Channel 0): %f mA\n", current/1000000.0);
 
 	printf("Press key to exit\n");
 	getchar();

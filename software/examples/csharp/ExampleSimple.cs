@@ -17,8 +17,8 @@ class Example
 		// Don't use device before ipcon is connected
 
 		// Get current current from channel 0
-		int voltage = id020.GetCurrent(0);
-		Console.WriteLine("Voltage (Channel 0): " + voltage/1000000.0 + " mA");
+		int current = id020.GetCurrent(0);
+		Console.WriteLine("Current (Channel 0): " + current/1000000.0 + " mA");
 
 		Console.WriteLine("Press enter to exit");
 		Console.ReadLine();

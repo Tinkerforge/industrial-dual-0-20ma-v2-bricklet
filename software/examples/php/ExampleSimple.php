@@ -17,8 +17,8 @@ $ipcon->connect(HOST, PORT); // Connect to brickd
 // Don't use device before ipcon is connected
 
 // Get current current from channel 0
-$voltage = $id020->getCurrent(0);
-echo "Voltage (Channel 0): " . $voltage/1000000.0 . " mA\n";
+$current = $id020->getCurrent(0);
+echo "Current (Channel 0): " . $current/1000000.0 . " mA\n";
 
 echo "Press key to exit\n";
 fgetc(fopen('php://stdin', 'r'));

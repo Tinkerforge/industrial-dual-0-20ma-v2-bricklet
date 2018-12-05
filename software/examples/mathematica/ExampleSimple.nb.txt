@@ -11,7 +11,7 @@ id020=NETNew["Tinkerforge.BrickletIndustrialDual020mAV2",uid,ipcon]
 ipcon@Connect[host,port]
 
 (*Get current current from channel 0*)
-Print["Voltage (Channel 0): "<>ToString[N[Quantity[id020@GetCurrent[0],"mA/1000000"]]]]
+Print["Current (Channel 0): "<>ToString[N[Quantity[id020@GetCurrent[0],"mA/1000000"]]]]
 
 (*Clean up*)
 ipcon@Disconnect[]

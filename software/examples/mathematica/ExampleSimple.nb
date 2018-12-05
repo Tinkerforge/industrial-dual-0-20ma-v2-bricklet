@@ -19,7 +19,7 @@ Notebook[{
    RowBox[{"
 "}],
    RowBox[{"(*", "Get current current from channel 0", "*)"}],
-   RowBox[{"Print", "[", RowBox[{"\"\<Voltage (Channel 0): \>\"", "<>", RowBox[{"ToString", "[", RowBox[{"N", "[", RowBox[{"Quantity", "[", RowBox[{RowBox[{"id020", "@", RowBox[{"GetCurrent", "[", "0", "]"}]}], ",", "\"\<mA/1000000\>\""}], "]"}], "]"}], "]"}]}], "]"}],
+   RowBox[{"Print", "[", RowBox[{"\"\<Current (Channel 0): \>\"", "<>", RowBox[{"ToString", "[", RowBox[{"N", "[", RowBox[{"Quantity", "[", RowBox[{RowBox[{"id020", "@", RowBox[{"GetCurrent", "[", "0", "]"}]}], ",", "\"\<mA/1000000\>\""}], "]"}], "]"}], "]"}]}], "]"}],
    RowBox[{"
 "}],
    RowBox[{"(*", "Clean up", "*)"}],

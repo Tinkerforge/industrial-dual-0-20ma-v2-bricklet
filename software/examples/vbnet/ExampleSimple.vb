@@ -14,8 +14,8 @@ Module ExampleSimple
         ' Don't use device before ipcon is connected
 
         ' Get current current from channel 0
-        Dim voltage As Integer = id020.GetCurrent(0)
-        Console.WriteLine("Voltage (Channel 0): " + (voltage/1000000.0).ToString() + " mA")
+        Dim current As Integer = id020.GetCurrent(0)
+        Console.WriteLine("Current (Channel 0): " + (current/1000000.0).ToString() + " mA")
 
         Console.WriteLine("Press key to exit")
         Console.ReadLine()
