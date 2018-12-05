@@ -7,7 +7,7 @@
 #define PORT 4223
 #define UID "XYZ" // Change XYZ to the UID of your Industrial Dual 0-20mA Bricklet 2.0
 
-// Callback function for voltage callback
+// Callback function for current callback
 void cb_current(uint8_t channel, int32_t current, void *user_data) {
 	(void)user_data; // avoid unused parameter warning
 
@@ -32,7 +32,7 @@ int main(void) {
 	}
 	// Don't use device before ipcon is connected
 
-	// Register voltage callback to function cb_current
+	// Register current callback to function cb_current
 	industrial_dual_0_20ma_v2_register_callback(&id020,
 	                                            INDUSTRIAL_DUAL_0_20MA_V2_CALLBACK_CURRENT,
 	                                            (void *)cb_current,

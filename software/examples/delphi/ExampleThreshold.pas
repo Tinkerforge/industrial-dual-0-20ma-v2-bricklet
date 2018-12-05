@@ -25,7 +25,7 @@ const
 var
   e: TExample;
 
-{ Callback procedure for voltage callback }
+{ Callback procedure for current callback }
 procedure TExample.CurrentCB(sender: TBrickletIndustrialDual020mAV2; const channel: byte;
                              const current: longint);
 begin
@@ -46,7 +46,7 @@ begin
   ipcon.Connect(HOST, PORT);
   { Don't use device before ipcon is connected }
 
-  { Register voltage callback to procedure CurrentCB }
+  { Register current callback to procedure CurrentCB }
   id020.OnCurrent := {$ifdef FPC}@{$endif}CurrentCB;
 
   { Configure threshold for current (channel 0) "greater than 10 mA"

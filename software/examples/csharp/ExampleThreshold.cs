@@ -7,7 +7,7 @@ class Example
 	private static int PORT = 4223;
 	private static string UID = "XYZ"; // Change XYZ to the UID of your Industrial Dual 0-20mA Bricklet 2.0
 
-	// Callback function for voltage callback
+	// Callback function for current callback
 	static void CurrentCB(BrickletIndustrialDual020mAV2 sender, byte channel, int current)
 	{
 		Console.WriteLine("Channel: " + channel);
@@ -24,7 +24,7 @@ class Example
 		ipcon.Connect(HOST, PORT); // Connect to brickd
 		// Don't use device before ipcon is connected
 
-		// Register voltage callback to function CurrentCB
+		// Register current callback to function CurrentCB
 		id020.CurrentCallback += CurrentCB;
 
 		// Configure threshold for current (channel 0) "greater than 10 mA"

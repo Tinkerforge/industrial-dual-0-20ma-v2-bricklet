@@ -3,7 +3,7 @@
 
 uid=XYZ # Change XYZ to the UID of your Industrial Dual 0-20mA Bricklet 2.0
 
-# Handle incoming voltage callbacks
+# Handle incoming current callbacks
 tinkerforge dispatch industrial-dual-0-20ma-v2-bricklet $uid current &
 
 # Configure threshold for current (channel 0) "greater than 10 mA"

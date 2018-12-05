@@ -22,9 +22,9 @@ ipcon.on(Tinkerforge.IPConnection.CALLBACK_CONNECTED,
     }
 );
 
-// Register voltage callback
+// Register current callback
 id020.on(Tinkerforge.BrickletIndustrialDual020mAV2.CALLBACK_CURRENT,
-    // Callback function for voltage callback
+    // Callback function for current callback
     function (channel, current) {
         console.log('Channel: ' + channel);
         console.log('Current: ' + current/1000000.0 + ' mA');

@@ -47,9 +47,9 @@
                     }
                 );
 
-                // Register voltage callback
+                // Register current callback
                 id020.on(Tinkerforge.BrickletIndustrialDual020mAV2.CALLBACK_CURRENT,
-                    // Callback function for voltage callback
+                    // Callback function for current callback
                     function (channel, current) {
                         textArea.value += 'Channel: ' + channel + '\n';
                         textArea.value += 'Current: ' + current/1000000.0 + ' mA\n';

@@ -18,7 +18,7 @@ Notebook[{
    RowBox[{"ipcon", "@", RowBox[{"Connect", "[", RowBox[{"host", ",", "port"}], "]"}]}],
    RowBox[{"
 "}],
-   RowBox[{"(*", "Callback function for voltage callback", "*)"}],
+   RowBox[{"(*", "Callback function for current callback", "*)"}],
    RowBox[{RowBox[{"CurrentCB", "[", RowBox[{"sender_", ",", "channel_", ",", "current_"}], "]"}], ":=", "\[IndentingNewLine]", RowBox[{"Module", "[", RowBox[{RowBox[{"{", "}"}], ",", RowBox[{"\[IndentingNewLine]", RowBox[{"Print", "[", RowBox[{"\"\<Channel: \>\"", "<>", RowBox[{"ToString", "[", "channel", "]"}]}], "]"}], ";", "\[IndentingNewLine]", RowBox[{"Print", "[", RowBox[{"\"\<Current: \>\"", "<>", RowBox[{"ToString", "[", RowBox[{"N", "[", RowBox[{"Quantity", "[", RowBox[{"current", ",", "\"\<mA/1000000\>\""}], "]"}], "]"}], "]"}]}], "]"}], "\[IndentingNewLine]"}]}], "]"}]}],
    RowBox[{"
 "}],

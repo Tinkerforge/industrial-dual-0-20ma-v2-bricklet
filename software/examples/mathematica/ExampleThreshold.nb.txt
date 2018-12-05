@@ -10,7 +10,7 @@ ipcon=NETNew["Tinkerforge.IPConnection"]
 id020=NETNew["Tinkerforge.BrickletIndustrialDual020mAV2",uid,ipcon]
 ipcon@Connect[host,port]
 
-(*Callback function for voltage callback*)
+(*Callback function for current callback*)
 CurrentCB[sender_,channel_,current_]:=
  Module[{},
   Print["Channel: "<>ToString[channel]];

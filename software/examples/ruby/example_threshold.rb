@@ -16,7 +16,7 @@ id020 = BrickletIndustrialDual020mAV2.new UID, ipcon # Create device object
 ipcon.connect HOST, PORT # Connect to brickd
 # Don't use device before ipcon is connected
 
-# Register voltage callback
+# Register current callback
 id020.register_callback(BrickletIndustrialDual020mAV2::CALLBACK_CURRENT) do |channel,
                                                                              current|
   puts "Channel: #{channel}"

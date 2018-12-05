@@ -8,7 +8,7 @@ use constant HOST => 'localhost';
 use constant PORT => 4223;
 use constant UID => 'XYZ'; # Change XYZ to the UID of your Industrial Dual 0-20mA Bricklet 2.0
 
-# Callback subroutine for voltage callback
+# Callback subroutine for current callback
 sub cb_current
 {
     my ($channel, $current) = @_;
@@ -24,7 +24,7 @@ my $id020 = Tinkerforge::BrickletIndustrialDual020mAV2->new(&UID, $ipcon); # Cre
 $ipcon->connect(&HOST, &PORT); # Connect to brickd
 # Don't use device before ipcon is connected
 
-# Register voltage callback to subroutine cb_current
+# Register current callback to subroutine cb_current
 $id020->register_callback($id020->CALLBACK_CURRENT, 'cb_current');
 
 # Configure threshold for current (channel 0) "greater than 10 mA"

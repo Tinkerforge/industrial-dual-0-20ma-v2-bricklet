@@ -11,7 +11,7 @@ function octave_example_threshold()
     ipcon.connect(HOST, PORT); % Connect to brickd
     % Don't use device before ipcon is connected
 
-    % Register voltage callback to function cb_current
+    % Register current callback to function cb_current
     id020.addCurrentCallback(@cb_current);
 
     % Configure threshold for current (channel 0) "greater than 10 mA"
@@ -22,7 +22,7 @@ function octave_example_threshold()
     ipcon.disconnect();
 end
 
-% Callback function for voltage callback
+% Callback function for current callback
 function cb_current(e)
     fprintf("Channel: %d\n", e.channel);
     fprintf("Current: %g mA\n", e.current/1000000.0);

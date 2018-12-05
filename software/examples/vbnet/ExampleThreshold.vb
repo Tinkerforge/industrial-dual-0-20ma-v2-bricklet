@@ -6,7 +6,7 @@ Module ExampleThreshold
     Const PORT As Integer = 4223
     Const UID As String = "XYZ" ' Change XYZ to the UID of your Industrial Dual 0-20mA Bricklet 2.0
 
-    ' Callback subroutine for voltage callback
+    ' Callback subroutine for current callback
     Sub CurrentCB(ByVal sender As BrickletIndustrialDual020mAV2, ByVal channel As Byte, _
                   ByVal current As Integer)
         Console.WriteLine("Channel: " + channel.ToString())
@@ -21,7 +21,7 @@ Module ExampleThreshold
         ipcon.Connect(HOST, PORT) ' Connect to brickd
         ' Don't use device before ipcon is connected
 
-        ' Register voltage callback to subroutine CurrentCB
+        ' Register current callback to subroutine CurrentCB
         AddHandler id020.CurrentCallback, AddressOf CurrentCB
 
         ' Configure threshold for current (channel 0) "greater than 10 mA"

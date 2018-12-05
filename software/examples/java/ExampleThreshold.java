@@ -18,7 +18,7 @@ public class ExampleThreshold {
 		ipcon.connect(HOST, PORT); // Connect to brickd
 		// Don't use device before ipcon is connected
 
-		// Add voltage listener
+		// Add current listener
 		id020.addCurrentListener(new BrickletIndustrialDual020mAV2.CurrentListener() {
 			public void current(int channel, int current) {
 				System.out.println("Channel: " + channel);
