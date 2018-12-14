@@ -20,7 +20,7 @@ func main() {
 
 	id020.RegisterCurrentCallback(func(channel uint8, current int32) {
 		fmt.Printf("Channel: %d\n", channel)
-		fmt.Printf("Current: %d mA\n", float64(current)/1000000.0)
+		fmt.Printf("Current: %f mA\n", float64(current)/1000000.0)
 		fmt.Println()
 	})
 
