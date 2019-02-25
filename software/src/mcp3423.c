@@ -30,7 +30,7 @@
 
 MCP3423_t mcp3423;
 
-XMC_GPIO_CONFIG_t channel_led_gpio_config = {
+const XMC_GPIO_CONFIG_t channel_led_gpio_config = {
 	.mode         = XMC_GPIO_MODE_OUTPUT_PUSH_PULL,
 	.output_level = XMC_GPIO_OUTPUT_LEVEL_HIGH,
 };
@@ -360,8 +360,8 @@ void mcp3423_tick(void) {
 						else {
 							int32_t range = mcp3423.channel_leds[i].min - mcp3423.channel_leds[i].max;
 							int32_t scaled_channel_current = mcp3423.channel_current[i] - mcp3423.channel_leds[i].max;
-							int32_t pwm_ds = (scaled_channel_current * 100) / range;
-							ccu4_pwm_set_duty_cycle(i + 1, (uint16_t)(100 - pwm_ds));
+							int32_t pwm_dc = (scaled_channel_current * 100) / range;
+							ccu4_pwm_set_duty_cycle(i + 1, (uint16_t)(100 - pwm_dc));
 						}
 					}
 					else {
@@ -374,8 +374,8 @@ void mcp3423_tick(void) {
 						else {
 							int32_t range = mcp3423.channel_leds[i].max - mcp3423.channel_leds[i].min;
 							int32_t scaled_channel_current = mcp3423.channel_current[i] - mcp3423.channel_leds[i].min;
-							int32_t pwm_ds = (scaled_channel_current * 100) / range;
-							ccu4_pwm_set_duty_cycle(i + 1, (uint16_t)pwm_ds);
+							int32_t pwm_dc = (scaled_channel_current * 100) / range;
+							ccu4_pwm_set_duty_cycle(i + 1, (uint16_t)pwm_dc);
 						}
 					}
 				}
