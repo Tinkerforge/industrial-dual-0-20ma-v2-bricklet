@@ -3,4 +3,4 @@
 setup:
 	# Get current current from channel 0
 	subscribe to tinkerforge/response/industrial_dual_0_20ma_v2_bricklet/XYZ/get_current
-	publish '{"channel": 0}' to tinkerforge/request/industrial_dual_0_20ma_v2_bricklet/XYZ/get_current 
+	publish '{"channel": 0}' to tinkerforge/request/industrial_dual_0_20ma_v2_bricklet/XYZ/get_current
