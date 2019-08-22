@@ -35,7 +35,7 @@ int main(void) {
 	// Register current callback to function cb_current
 	industrial_dual_0_20ma_v2_register_callback(&id020,
 	                                            INDUSTRIAL_DUAL_0_20MA_V2_CALLBACK_CURRENT,
-	                                            (void *)cb_current,
+	                                            (void (*)(void))cb_current,
 	                                            NULL);
 
 	// Configure threshold for current (channel 0) "greater than 10 mA"
