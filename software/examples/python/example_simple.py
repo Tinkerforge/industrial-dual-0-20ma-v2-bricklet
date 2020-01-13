@@ -19,5 +19,5 @@ if __name__ == "__main__":
     current = id020.get_current(0)
     print("Current (Channel 0): " + str(current/1000000.0) + " mA")
 
-    raw_input("Press key to exit\n") # Use input() in Python 3
+    input("Press key to exit\n") # Use raw_input() in Python 2
     ipcon.disconnect()
