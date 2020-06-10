@@ -66,7 +66,7 @@ BootloaderHandleMessageResponse set_sample_rate(const SetSampleRate *data) {
 			break;
 
 		default:
-			break;
+			return HANDLE_MESSAGE_RESPONSE_INVALID_PARAMETER;
 	}
 
 	return HANDLE_MESSAGE_RESPONSE_EMPTY;
@@ -118,7 +118,7 @@ BootloaderHandleMessageResponse set_gain(const SetGain *data) {
 			break;
 
 		default:
-			break;
+			return HANDLE_MESSAGE_RESPONSE_INVALID_PARAMETER;
 	}
 
 	return HANDLE_MESSAGE_RESPONSE_EMPTY;
