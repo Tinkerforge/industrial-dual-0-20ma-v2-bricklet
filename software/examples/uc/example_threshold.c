@@ -1,13 +1,9 @@
-
-
 #include "bindings/hal_common.h"
 #include "bindings/bricklet_industrial_dual_0_20ma_v2.h"
 
 #define UID "XYZ" // Change XYZ to the UID of your Industrial Dual 0-20mA Bricklet 2.0
 
 void check(int rc, const char* msg);
-
-
 
 // Callback function for current callback
 void current_handler(TF_IndustrialDual020mAV2 *device, uint8_t channel, int32_t current,
@@ -18,7 +14,6 @@ void current_handler(TF_IndustrialDual020mAV2 *device, uint8_t channel, int32_t 
 	tf_hal_printf("Current: %d 1/%d mA\n", current, 1000000.0);
 	tf_hal_printf("\n");
 }
-
 
 TF_IndustrialDual020mAV2 id020;
 
