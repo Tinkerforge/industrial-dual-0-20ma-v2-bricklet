@@ -21,16 +21,14 @@ void example_setup(TF_HalContext *hal) {
 	// Create device object
 	check(tf_industrial_dual_0_20ma_v2_create(&id020, UID, hal), "create device object");
 
-
 	// Register current callback to function current_handler
 	tf_industrial_dual_0_20ma_v2_register_current_callback(&id020,
-	                                                      current_handler,
-	                                                      NULL);
+	                                                       current_handler,
+	                                                       NULL);
 
 	// Configure threshold for current (channel 0) "greater than 10 mA"
 	// with a debounce period of 10s (10000ms)
 	tf_industrial_dual_0_20ma_v2_set_current_callback_configuration(&id020, 0, 10000, false, '>', 10*1000000, 0);
-
 }
 
 void example_loop(TF_HalContext *hal) {
