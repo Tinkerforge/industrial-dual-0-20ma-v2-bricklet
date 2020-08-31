@@ -14,7 +14,7 @@ static void current_handler(TF_IndustrialDual020mAV2 *device, uint8_t channel,
                             int32_t current, void *user_data) {
 	(void)device; (void)user_data; // avoid unused parameter warning
 
-	tf_hal_printf("Channel: %u\n", channel);
+	tf_hal_printf("Channel: %I8u\n", channel);
 	tf_hal_printf("Current: %d 1/%d mA\n", current, 1000000.0);
 	tf_hal_printf("\n");
 }
