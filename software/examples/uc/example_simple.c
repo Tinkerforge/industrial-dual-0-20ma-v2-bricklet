@@ -9,13 +9,13 @@
 
 void check(int rc, const char* msg);
 
-void example_setup(TF_HalContext *hal);
-void example_loop(TF_HalContext *hal);
+void example_setup(TF_HAL *hal);
+void example_loop(TF_HAL *hal);
 
 
 static TF_IndustrialDual020mAV2 id020;
 
-void example_setup(TF_HalContext *hal) {
+void example_setup(TF_HAL *hal) {
 	// Create device object
 	check(tf_industrial_dual_0_20ma_v2_create(&id020, UID, hal), "create device object");
 
@@ -27,7 +27,7 @@ void example_setup(TF_HalContext *hal) {
 	tf_hal_printf("Current (Channel 0): %d 1/%d mA\n", current, 1000000);
 }
 
-void example_loop(TF_HalContext *hal) {
+void example_loop(TF_HAL *hal) {
 	// Poll for callbacks
 	tf_hal_callback_tick(hal, 0);
 }
